@@ -32,7 +32,7 @@ public class App {
             }
             br.close();
 
-            // 標準出力のTSVデータのパターンに応じて正規化への変換、逆変換に分岐
+            // 標準入力のTSVデータのパターンに応じて正規化への変換、逆変換に分岐
             BufferedReader tsvData = new BufferedReader(new InputStreamReader(System.in));
             if(fileType == FILE_TYPE_NORMAL){
                 standarization.standardizeTSV(tsvData);    

@@ -8,7 +8,6 @@ public class standarization {
     
     /** 1. 第一正規化 */
     public static void standardizeTSV(BufferedReader br){
-
         String line = null;
         
         while (br.readLine() != null) {
@@ -42,10 +41,13 @@ public class standarization {
         String value = null;
         
         while (br.readLine() != null) {
+
             // TSVデータの内容を1行ずつ読み取る
             line = br.readLine();
             // キー情報を集計
             key = line.split("\t", -1)[0];
+
+            // 各グループごとに値を集計
             if(keyValueMap.containsKey(key)){
                 StringBuilder sb = new StringBuilder();
                 // 既にキーが存在する場合、今の行の値を「：」で連結して上書き
@@ -59,7 +61,7 @@ public class standarization {
             }
         }
 
-        // 集計したデータを正規化前の状態にして出力
+        // Mapで集計済みになっているので、キーと値をタブ区切りで出力
         for (Map.Entry<String, String[]> tsvOutput : keyValueMap.entrySet()) {
             System.out.println(tsvOutput.getKey() + "\t" + tsvOutput.getValue());
         }
