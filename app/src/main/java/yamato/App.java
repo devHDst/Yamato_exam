@@ -6,14 +6,14 @@ package yamato;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import main.java.yamato.standarization.standarization;
+import yamato.standarization.standarization;
 
 public class App {
     
     private static int FILE_TYPE_NORMAL = 1;
     private static int FILE_TYPE_REVERSE = 2;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         int fileType = 0;
         if(args.length > 0) {

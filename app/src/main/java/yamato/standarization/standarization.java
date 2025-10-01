@@ -1,13 +1,16 @@
-package main.java.yamato.standarization;
+package yamato.standarization;
 
 import java.io.BufferedReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class standarization {
     
     /** 1. 第一正規化 */
-    public static void standardizeTSV(BufferedReader br){
+    public static void standardizeTSV(BufferedReader br) throws Exception{
         String line = null;
         
         while (br.readLine() != null) {
@@ -33,10 +36,10 @@ public class standarization {
     }
 
     /** 2.第一正規化の逆変換 */
-    public static void revrerseStandardizeTSV(BufferedReader br){
+    public static void revrerseStandardizeTSV(BufferedReader br) throws Exception{
         String line = null;
         // 2重配列でデータを集計
-        Map<String, String[]> keyValueMap = new HashMap<>();
+        Map<String, String> keyValueMap = new HashMap<>();
         String key = "";
         String value = null;
         
@@ -62,7 +65,7 @@ public class standarization {
         }
 
         // Mapで集計済みになっているので、キーと値をタブ区切りで出力
-        for (Map.Entry<String, String[]> tsvOutput : keyValueMap.entrySet()) {
+        for (Entry<String, String> tsvOutput : keyValueMap.entrySet()) {
             System.out.println(tsvOutput.getKey() + "\t" + tsvOutput.getValue());
         }
     }
