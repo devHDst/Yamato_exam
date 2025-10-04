@@ -5,8 +5,10 @@ package yamato;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import yamato.standarization.standarization;
 
 public class App {
     
@@ -17,30 +19,88 @@ public class App {
 
         int fileType = 0;
         if(args.length > 0) {
+            System.out.println("tsvデータ式の文字列を読み込みました");
             // 標準入力を読み取る
-            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-            String line = null;
-            while (br.readLine() != null) {
-                line = br.readLine();
-                // コロンが一箇所でも見つかる場合、正規化前のファイルと判定
+            String[] eachLine = args[0].split("\\\\n",-1);
+            for (String line : eachLine) {
                 if(line.indexOf(":") != -1){
-                    fileType = FILE_TYPE_NORMAL; // 通常の正規化へ
+                    fileType = FILE_TYPE_NORMAL;
                     break;
                 }
-                fileType = FILE_TYPE_REVERSE; // 逆変換へ
             }
-            br.close();
+            if(fileType == 0){
+                fileType = FILE_TYPE_REVERSE;
+            }
 
             // 標準入力のTSVデータのパターンに応じて正規化への変換、逆変換に分岐
-            BufferedReader tsvData = new BufferedReader(new InputStreamReader(System.in));
             if(fileType == FILE_TYPE_NORMAL){
-                standarization.standardizeTSV(tsvData);    
+                App.standardizeTSV(args[0]);    
             }else if(fileType == FILE_TYPE_REVERSE){
-                standarization.revrerseStandardizeTSV(tsvData);
+                App.revrerseStandardizeTSV(args[0]);
             }
         }else{
-            System.out.println("tsvデータを渡してください");
+            System.out.println("tsvデータ式の文字列を標準入力で与えてください");
+        }
+        return;
+    }
+
+    /** 1. 第一正規化 
+     * java App.java "apple\tfruit:sale\nbanana:cherry\tfruit\n\tbeverage"
+     * で検証
+    */
+    public static void standardizeTSV(String tsvData) throws Exception{
+        String[] eachLine = tsvData.split("\\\\n",-1);
+        
+        for (String line : eachLine) {
+            // タブ区切りで列に分解
+            String key = line.split("\\\\t", -1)[0];
+            String value = line.split("\\\\t", -1)[1];
+            // グループ区切りでさらに分解
+            String[] keyContents = key.split(":", -1);
+            String[] valueContents = value.split(":", -1);
+            
+            // 分解した列を正規化して出力
+            for (String keyString : keyContents) {
+                for (String valueString : valueContents) {
+                    // 第一正規化を行ごとに出力
+                    System.out.println(keyString + "\t" + valueString);
+                }
+            }
+        }
+    }
+
+    /** 2.第一正規化の逆変換
+     * java App.java "fruit\tapple\nfruit\tbanana\nbeverage\t\nfruit\tbanana\nbeverage\tcoke\npet\tdog"
+     *  で検証
+     */
+    public static void revrerseStandardizeTSV(String tsvData) throws Exception{
+        String[] eachLine = tsvData.split("\\\\n");
+        // 2重配列でデータを集計
+        Map<String, String> keyValueMap = new HashMap<>();
+        String value = "";
+
+        for (String line : eachLine) {
+            // キー情報を集計
+            String key = line.split("\\\\t", -1)[0];
+            int linelength = line.split("\\\\t", -1).length;
+            
+            // 各グループごとに値を集計
+            if(keyValueMap.containsKey(key)){
+                StringBuilder sb = new StringBuilder();
+                // 既にキーが存在する場合、今の行の値を「：」で連結して上書き
+                sb.append(keyValueMap.get(key)).append(":").append(line.split("\\\\t", -1)[linelength - 1]);
+                value = sb.toString();
+                keyValueMap.put(key, value);
+            }else{
+                // キーが存在しない場合、新規グループ登録
+                value = line.split("\\\\t", -1)[linelength - 1];
+                keyValueMap.put(key, value);
+            }
+        }
+        
+        // Mapで集計済みになっているので、キーと値をタブ区切りで出力
+        for (Entry<String, String> tsvOutput : keyValueMap.entrySet()) {
+            System.out.println(tsvOutput.getKey() + "\t" + tsvOutput.getValue());
         }
     }
 }
