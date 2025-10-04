@@ -12,11 +12,21 @@ import java.util.Map.Entry;
 
 public class App {
     
+    // FILE_TYPE_NORMALは問１、FILE_TYPE_REVERSEは問２の処理に対応する
     private static int FILE_TYPE_NORMAL = 1;
     private static int FILE_TYPE_REVERSE = 2;
 
+    /**
+     * 各問に対する検証コマンド
+     * 問1.java App.java "apple\tfruit:sale\nbanana:cherry\tfruit\n\tbeverage"
+     * 問2.java App.java "fruit\tapple\nfruit\tbanana\nbeverage\t\nfruit\tbanana\nbeverage\tcoke\npet\tdog"
+     *
+     * @param args[0]   tsvデータ式で渡された、正規化済み、もしくは正規化前の文字列
+     * @output 標準出力で結果を出力
+     * @return 
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
-
         int fileType = 0;
         if(args.length > 0) {
             System.out.println("tsvデータ式の文字列を読み込みました");
@@ -44,10 +54,7 @@ public class App {
         return;
     }
 
-    /** 1. 第一正規化 
-     * java App.java "apple\tfruit:sale\nbanana:cherry\tfruit\n\tbeverage"
-     * で検証
-    */
+    /** 1. 第一正規化 */
     public static void standardizeTSV(String tsvData) throws Exception{
         String[] eachLine = tsvData.split("\\\\n",-1);
         
@@ -69,10 +76,7 @@ public class App {
         }
     }
 
-    /** 2.第一正規化の逆変換
-     * java App.java "fruit\tapple\nfruit\tbanana\nbeverage\t\nfruit\tbanana\nbeverage\tcoke\npet\tdog"
-     *  で検証
-     */
+    /** 2.第一正規化の逆変換 */
     public static void revrerseStandardizeTSV(String tsvData) throws Exception{
         String[] eachLine = tsvData.split("\\\\n");
         // 2重配列でデータを集計
